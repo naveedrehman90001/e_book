@@ -1,7 +1,9 @@
 import 'package:e_book/utils/exports.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 class OnBoardingScreen extends StatelessWidget {
+
   final List<PageViewModel> listPageViewModel = [
     PageViewModel(
       title: 'Wellcome',
@@ -40,11 +42,11 @@ class OnBoardingScreen extends StatelessWidget {
         showSkipButton: true,
         skip: const Text('SkIP'),
         skipColor: AppColors.kPrimaryColor,
-        onSkip: () => Get.offAll(HomeScreen()),
+        onSkip: () => Get.offAll(LoginScreen()),
         skipFlex: 0,
         done: const Text('Done'),
         doneColor: AppColors.kPrimaryColor,
-        onDone: () => Get.offAll(HomeScreen()),
+        onDone: () => Get.offAll(LoginScreen()),
         next: Text('Next'),
         nextColor: AppColors.kPrimaryColor,
         nextFlex: 0,

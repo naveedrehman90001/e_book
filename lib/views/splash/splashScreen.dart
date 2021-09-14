@@ -8,9 +8,10 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  User? user = FirebaseAuth.instance.currentUser;
   void splashDuration() {
     Timer(Duration(seconds: 3), () {
-      Get.offAll(OnBoardingScreen());
+      Get.offAll(() => user == null ? OnBoardingScreen() : HomeScreen());
     });
   }
 
