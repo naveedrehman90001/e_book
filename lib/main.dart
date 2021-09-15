@@ -1,9 +1,13 @@
 import 'package:e_book/utils/exports.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+int? isViewed;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  isViewed = sharedPreferences.getInt('onBoarding');
   runApp(const MyApp());
 }
 
@@ -20,7 +24,11 @@ class MyApp extends StatelessWidget {
         primaryColor: AppColors.kPrimaryColor,
         scaffoldBackgroundColor: AppColors.kWhiteColor,
       ),
-      home: SplashScreen(),
+      home: isViewed != 0 && isViewed != 1
+          ? OnBoardingScreen()
+          : isViewed == 0 && isViewed != 1
+              ? const LoginScreen()
+              : HomeScreen(),
     );
   }
 }

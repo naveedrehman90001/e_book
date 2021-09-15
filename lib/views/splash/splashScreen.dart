@@ -7,11 +7,12 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+// int? isViewed;
 class _SplashScreenState extends State<SplashScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   void splashDuration() {
     Timer(Duration(seconds: 3), () {
-      Get.offAll(() => user == null ? OnBoardingScreen() : HomeScreen());
+      Get.offAll(() => user == null ? OnBoardingScreen() : LoginScreen());
     });
   }
 
@@ -19,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     splashDuration();
+    // _isViewedOnBoarding();
   }
 
   @override

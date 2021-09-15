@@ -9,19 +9,18 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _signUpFormKey = GlobalKey<FormState>();
+  // _storeLoginInfo() async {
+  //   int isViewed = 1;
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   await sharedPreferences.setInt('onBoarding', isViewed);
+  // }
 
   final _firebaseAuth = FirebaseAuth.instance;
-
-  final _user = FirebaseAuth.instance.currentUser;
-
+  User? user = FirebaseAuth.instance.currentUser;
   final usersCollection = FirebaseFirestore.instance.collection('users');
-
   final _nameController = TextEditingController();
-
   final _emailController = TextEditingController();
-
   final _passwordController = TextEditingController();
-
   final _conformPasswordController = TextEditingController();
 
   bool isLoading = false;
@@ -46,84 +45,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     // mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      const SizedBox(height: 30),
-                      TextFormField(
+                      const SizedBox(height: 20),
+                      buildTextFormField(
                         controller: _nameController,
-                        decoration: InputDecoration(
-                          hintText: 'Please enter your name',
-                          prefixIcon: const Icon(Icons.person_outline),
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                        ),
-                        validator: (value) {
+                        hintText: 'Please enter your name',
+                        prefixIcon: Icons.person_outline,
+                        validate: (String? value) {
                           if (!GetUtils.isLengthGreaterOrEqual(value, 3)) {
                             return 'Name must be 3 characters or greater';
                           }
                         },
                       ),
-                      const SizedBox(height: 30),
-                      TextFormField(
+                      const SizedBox(height: 20),
+                      buildTextFormField(
                         controller: _emailController,
-                        decoration: InputDecoration(
-                          hintText: 'Please enter your email',
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                        ),
-                        validator: (value) {
+                        hintText: 'Please enter your email',
+                        prefixIcon: Icons.email,
+                        validate: (String? value) {
                           if (!GetUtils.isEmail(value!)) {
                             return 'Please provide a valid email';
                           }
                         },
                       ),
-                      const SizedBox(height: 30),
-                      TextFormField(
+                      const SizedBox(height: 20),
+                      buildTextFormField(
                         controller: _passwordController,
-                        decoration: InputDecoration(
-                          hintText: 'Please enter your password',
-                          prefixIcon: const Icon(Icons.lock_outlined),
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                        ),
-                        validator: (value) {
+                        hintText: 'Please enter your password',
+                        prefixIcon: Icons.lock_outlined,
+                        validate: (String? value) {
                           if (!GetUtils.isLengthGreaterOrEqual(value, 6)) {
                             return 'Password must be 6 characters or greater';
                           }
                         },
                       ),
-                      const SizedBox(height: 30),
-                      TextFormField(
+                      const SizedBox(height: 20),
+                      buildTextFormField(
                         controller: _conformPasswordController,
-                        decoration: InputDecoration(
-                          hintText: 'Please conform your password',
-                          prefixIcon: const Icon(Icons.lock_outlined),
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                        ),
-                        validator: (value) {
+                        hintText: 'Please conform your password',
+                        prefixIcon: Icons.lock_outlined,
+                        validate: (String? value) {
                           if (!GetUtils.hasMatch(
                               value, _passwordController.text)) {
                             return 'Oop\'s password not match';
                           }
                         },
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
                           //TODO Call Create User Function
@@ -135,16 +102,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               await _firebaseAuth
                                   .createUserWithEmailAndPassword(
                                 email: _emailController.text.trim(),
-                                password: _passwordController.text.trim(),
+                                password: _passwordController.text,
                               )
                                   .then((value) {
-                                usersCollection.add({
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .set({
+                                  'userId': FirebaseAuth
+                                      .instance.currentUser!.uid
+                                      .toString(),
                                   'name': _nameController.text,
-                                  'email': _emailController.text,
-                                }).then(
-                                    (value) => Get.offAll(() => HomeScreen())).catchError((e){
+                                  'email': _emailController.text.trim(),
+                                }).catchError((e) {
                                   print(e.message!);
                                 });
+                              }).whenComplete(() async {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                await storeInfo(1);
+                                Get.offAll(() => HomeScreen());
                               });
                             } on FirebaseAuthException catch (e) {
                               //TODO show snak bar
