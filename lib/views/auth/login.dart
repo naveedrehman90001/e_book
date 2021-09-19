@@ -109,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                                   .then((value) async {
                                 await storeInfo(1);
-                                Get.offAll(() => HomeScreen());
+                                Get.offAll(() => MainScreen());
                               }).catchError((e) {
                                 Get.snackbar(
                                   'Error while Logging In to Account',
@@ -165,10 +165,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 print(e.message!);
                               });
                               await storeInfo(1);
-                              Get.offAll(() => HomeScreen());
+                              Get.offAll(() => MainScreen());
                             }
                           } catch (e) {
-                            print(e.toString);
+                            // print(e.toString);
                           }
                         },
                         child: const Text('G'),

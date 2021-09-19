@@ -1,6 +1,6 @@
 import 'package:e_book/utils/exports.dart';
 
-EdgeInsets kDefaultPadding = EdgeInsets.symmetric(horizontal: Get.width * 0.04);
+EdgeInsets kDefaultPadding = EdgeInsets.symmetric(horizontal: Get.width * 0.03);
 
 const kHeadingTextStyle = TextStyle(
   fontSize: 24,

@@ -114,15 +114,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       .toString(),
                                   'name': _nameController.text,
                                   'email': _emailController.text.trim(),
-                                }).catchError((e) {
-                                  print(e.message!);
                                 });
+                                Get.offAll(() => HomeScreen());
+                              }).catchError((e) {
+                                Get.snackbar(
+                                    'Error while creating Account', e.message!);
                               }).whenComplete(() async {
                                 setState(() {
                                   isLoading = false;
                                 });
                                 await storeInfo(1);
-                                Get.offAll(() => HomeScreen());
                               });
                             } on FirebaseAuthException catch (e) {
                               //TODO show snak bar
